@@ -3,11 +3,46 @@ final int STONE_SIZE = (int)(SIZE*0.7);
 final int NONE = 0;
 final int BLACK = 1;
 final int WHITE = 2;
+final int RED = 3;
 Table table;
-
+int highest = 0;
 int [][] field;
+int [][] omomi = {
+  {
+    120, -20, 20, 5, 5, 20, -20, 120
+  }
+  , 
+  {
+    -20, -40, -5, -5, -5, -5, -40, -20
+  }
+  , 
+  {
+    20, -5, 15, 3, 3, 15, -5, 20
+  }
+  , 
+  {
+    5, -5, 3, 3, 3, 3, -5, 5
+  }
+  , 
+  {
+    5, -5, 3, 3, 3, 3, -5, 5
+  }
+  , 
+  {
+    20, -5, 15, 3, 3, 15, -5, 20
+  }
+  , 
+  {
+    -20, -40, -5, -5, -5, -5, -40, -20
+  }
+  , 
+  {
+    120, -20, 20, 5, 5, 20, -20, 120
+  }
+};
 boolean black_turn = true;
-
+int highest_x = 0;
+int highest_y = 0;
 void setup() {
   size(8*SIZE, 10*SIZE);
   field = new int[8][8];
@@ -30,6 +65,8 @@ void setup() {
 
 void draw() {
   int point = 0;
+  int x = 0;
+  int y = 0;
   background(0, 128, 0);
 
   stroke(0);
@@ -42,9 +79,9 @@ void draw() {
 
   noStroke();
   if (!black_turn) {
-    //frameRate(1);
     AI();
   }
+
   for (int i=0; i<8; i++) {
     for (int j=0; j<8; j++) {
       if (field[i][j]==BLACK) {
@@ -53,13 +90,22 @@ void draw() {
       } else if (field[i][j]==WHITE) {
         fill(255); //白色
         ellipse((i*2+1)*SIZE/2, (j*2+1)*SIZE/2, STONE_SIZE, STONE_SIZE);
+      } else {
+        for (int s = -1; s<=1; s++) {
+          for (int t = -1; t<=1; t++) {
+            if (black_turn) {
+              if (OnlyPreCheck(i, j, s, t, BLACK)) {
+                if (OnlyCheck(i, j, s, t, BLACK)) {
+                  fill(0, 158, 0);
+                  rect(i*SIZE+2, j*SIZE+2, SIZE-4, SIZE-4);
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
-  //draw_cursor();
-  /*if (point != 0) {
-   black_turn =! black_turn;
-   }*/
   textSize(20);
   text("BLACK", 80, 420);
   text("WHITE", 280, 420);
@@ -104,39 +150,22 @@ void mousePressed() {
   int y = mouseY/SIZE;
   int point=0;
   if (field[x][y] == NONE) {
-    println("Check1");
     for (int i = -1; i <= 1; i++) {
       for (int j = -1; j <= 1; j++) {
         if (black_turn) {
           if (PreCheck(x, y, i, j, BLACK)) {
-            println("Check2");
             if (Check(x, y, i, j, BLACK)) {
-              println("Check3");
+              println("ok");
               field[x][y] = BLACK;
-              //black_turn=!black_turn;
-              println(black_turn);
-              Save(x,y,BLACK);
+              Save(x, y, BLACK);
               point++;
             }
           }
-        } 
-        /*else if (!black_turn) {
-         if (PreCheck(x, y, i, j, WHITE)) {
-         println("Check2");
-         if (Check(x, y, i, j, WHITE)) {
-         println("Check3");
-         field[x][y] = WHITE;
-         println(black_turn);
-         point++;
-         }
-         }
-         }
-         */
+        }
       }
     }
   }
   if (point!=0) {
-    println("change");
     black_turn=!black_turn;
   }
 }

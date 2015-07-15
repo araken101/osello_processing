@@ -1,6 +1,5 @@
 boolean Check(int x, int y, int dirX, int dirY, int C) {
   if (!(x+dirX>=0 && y+dirY>=0 && x+dirX<8 && y+dirY<8)) {
-    println("no1");
     return false;
   }
   if (field[x+dirX][y+dirY] == C && field[x+dirX][y+dirY] != NONE) {
@@ -13,7 +12,6 @@ boolean Check(int x, int y, int dirX, int dirY, int C) {
       return true;
     }
   }
-  println("no2");
   return false;
 }
 
