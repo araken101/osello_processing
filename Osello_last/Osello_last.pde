@@ -1,9 +1,8 @@
 final int SIZE = 50;//1マスの長さ
 final int STONE_SIZE = (int)(SIZE*0.7);
 final int NONE = 0;
-final int BLACK = 1;
-final int WHITE = 2;
-final int RED = 3;
+int BLACK = 1; 
+int WHITE = 2;
 Table table;
 int highest = 0;
 int [][] field;
@@ -43,6 +42,8 @@ int [][] omomi = {
 boolean black_turn = true;
 int highest_x = 0;
 int highest_y = 0;
+int highest_dirX = 0;
+int highest_dirY = 0;
 void setup() {
   size(8*SIZE, 10*SIZE);
   field = new int[8][8];
@@ -155,7 +156,6 @@ void mousePressed() {
         if (black_turn) {
           if (PreCheck(x, y, i, j, BLACK)) {
             if (Check(x, y, i, j, BLACK)) {
-              println("ok");
               field[x][y] = BLACK;
               Save(x, y, BLACK);
               point++;

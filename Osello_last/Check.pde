@@ -11,6 +11,8 @@ boolean Check(int x, int y, int dirX, int dirY, int C) {
       field[x][y] = C;
       return true;
     }
+  } else {
+    return false;
   }
   return false;
 }
