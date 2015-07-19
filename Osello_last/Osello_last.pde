@@ -5,6 +5,7 @@ int BLACK = 1;
 int WHITE = 2;
 Table table;
 int highest = 0;
+int player = 0;
 int [][] field;
 int [][] omomi = {
   {
@@ -79,26 +80,47 @@ void draw() {
   rect(0, 400, 400, 500);
 
   noStroke();
-  if (!black_turn) {
-    AI();
+  if (player == 1) {
+    if (!black_turn) {
+      AI();
+    }
+  } else if (player == 2) {
+    if (black_turn) {
+      AI();
+    }
   }
-
-  for (int i=0; i<8; i++) {
-    for (int j=0; j<8; j++) {
-      if (field[i][j]==BLACK) {
-        fill(0);  //黒色
-        ellipse((i*2+1)*SIZE/2, (j*2+1)*SIZE/2, STONE_SIZE, STONE_SIZE);
-      } else if (field[i][j]==WHITE) {
-        fill(255); //白色
-        ellipse((i*2+1)*SIZE/2, (j*2+1)*SIZE/2, STONE_SIZE, STONE_SIZE);
-      } else {
-        for (int s = -1; s<=1; s++) {
-          for (int t = -1; t<=1; t++) {
-            if (black_turn) {
-              if (OnlyPreCheck(i, j, s, t, BLACK)) {
-                if (OnlyCheck(i, j, s, t, BLACK)) {
-                  fill(0, 158, 0);
-                  rect(i*SIZE+2, j*SIZE+2, SIZE-4, SIZE-4);
+  if (player == 0) {
+    fill(0);
+    ellipse(SIZE*2, SIZE*4, STONE_SIZE*3, STONE_SIZE*3);
+    fill(255);
+    ellipse(SIZE*6, SIZE*4, STONE_SIZE*3, STONE_SIZE*3);
+  }
+  if (player != 0) {
+    for (int i=0; i<8; i++) {
+      for (int j=0; j<8; j++) {
+        if (field[i][j]==BLACK) {
+          fill(0);  //黒色
+          ellipse((i*2+1)*SIZE/2, (j*2+1)*SIZE/2, STONE_SIZE, STONE_SIZE);
+        } else if (field[i][j]==WHITE) {
+          fill(255); //白色
+          ellipse((i*2+1)*SIZE/2, (j*2+1)*SIZE/2, STONE_SIZE, STONE_SIZE);
+        } else {
+          for (int s = -1; s<=1; s++) {
+            for (int t = -1; t<=1; t++) {
+              if (black_turn) {
+                if (OnlyPreCheck(i, j, s, t, BLACK)) {
+                  if (OnlyCheck(i, j, s, t, BLACK)) {
+                    fill(0, 158, 0);
+                    rect(i*SIZE+2, j*SIZE+2, SIZE-4, SIZE-4);
+                  }
+                }
+              }
+              else if (!black_turn) {
+                if (OnlyPreCheck(i, j, s, t, WHITE)) {
+                  if (OnlyCheck(i, j, s, t, WHITE)) {
+                    fill(0, 158, 0);
+                    rect(i*SIZE+2, j*SIZE+2, SIZE-4, SIZE-4);
+                  }
                 }
               }
             }
@@ -147,29 +169,53 @@ void draw() {
   text(countW, 300, 460);
 }
 void mousePressed() {
+  if (player == 0) {
+    if (dist(mouseX, mouseY, SIZE*2, SIZE*4)<STONE_SIZE*3/2)player=1;
+    if (dist(mouseX, mouseY, SIZE*6, SIZE*4)<STONE_SIZE*3/2)player=2;
+  }
   int x = mouseX/SIZE;
   int y = mouseY/SIZE;
   int point=0;
-  if (field[x][y] == NONE) {
-    for (int i = -1; i <= 1; i++) {
-      for (int j = -1; j <= 1; j++) {
-        if (black_turn) {
-          if (PreCheck(x, y, i, j, BLACK)) {
-            if (Check(x, y, i, j, BLACK)) {
-              field[x][y] = BLACK;
-              Save(x, y, BLACK);
-              point++;
+  if (player == 1) {
+    if (field[x][y] == NONE) {
+      for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+          if (black_turn) {
+            if (PreCheck(x, y, i, j, BLACK)) {
+              if (Check(x, y, i, j, BLACK)) {
+                field[x][y] = BLACK;
+                Save(x, y, BLACK);
+                point++;
+              }
             }
           }
         }
       }
     }
-  }
-  if (point!=0) {
-    black_turn=!black_turn;
+    if (point!=0) {
+      black_turn=!black_turn;
+    }
+  } else if (player == 2) {
+    if (field[x][y] == NONE) {
+      for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+          if (!black_turn) {
+            if (PreCheck(x, y, i, j, WHITE)) {
+              if (Check(x, y, i, j, WHITE)) {
+                field[x][y] = WHITE;
+                Save(x, y, WHITE);
+                point++;
+              }
+            }
+          }
+        }
+      }
+    }
+    if (point!=0) {
+      black_turn=!black_turn;
+    }
   }
 }
-
 
 void keyPressed() {
   if (key == 'N' || key == 'n')
